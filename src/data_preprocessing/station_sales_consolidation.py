@@ -72,7 +72,7 @@ class DataPreprocessor:
         districts_df['Proportion Sales'] = districts_df['Total Sales'] / districts_df['Total Sales'].sum()
 
         # Exporting data
-        PandasFileConnector.save(districts_df, Path(cls.EXPORT_DIR['intermediate'], "districts_df.csv"))
+        PandasFileConnector.save(districts_df, Path(cls.EXPORT_DIR['model_input'], "districts_df.csv"))
 
 
     @classmethod
