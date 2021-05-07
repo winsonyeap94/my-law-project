@@ -1,8 +1,8 @@
-from conf import Config, Logger
 import sys
-from collections import defaultdict
 import pandas as pd
 from typing import List, Dict
+from conf import Config, Logger
+from collections import defaultdict
 from src.optimisation_model.input_handler import InputHandler
 
 

@@ -1,6 +1,7 @@
-import pyomo.environ as aml
-from conf import Logger
 import json
+from conf import Logger
+import pyomo.environ as aml
+
 
 class Postprocessing(object):
     

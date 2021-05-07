@@ -1,11 +1,11 @@
-
+from conf import Logger
 from src.optimisation_model.preprocessing import Preprocessing
 from src.optimisation_model.model import OptimisationModel
 from src.optimisation_model.solver import ModelSolver
 from src.optimisation_model.postprocessing import Postprocessing
-from conf import Logger
 
 _logger = Logger().logger
+
 
 def main():
     """
@@ -33,6 +33,7 @@ def main():
     _logger.debug("[PostProcessing] completed successfully.")
 
     return postprocess_output
+
 
 if __name__ == "__main__":
     main()
