@@ -6,6 +6,8 @@ All data loading should come from this class to ensure standardised and structur
 """
 
 import pandas as pd
+from conf import Config
+from pathlib import Path
 from src.data_connectors import PandasFileConnector
 
 pd.set_option("max.columns", 20)
@@ -15,29 +17,18 @@ pd.set_option("display.width", 2000)
 class InputHandler:
     
     @classmethod
-    def get_data_technicians(cls):
-
+    def get_districts_data(cls):
         data_df = PandasFileConnector.load(
-            "./data/01_raw/technicians.csv",
-            file_type='csv'
+            Path(Config.FILES["MODEL_INPUT_DATA"], "districts_df.csv")
         )
         return data_df
 
     @classmethod
-    def get_data_locations(cls):
-
+    def get_warehouse_options(cls):
+        
         data_df = PandasFileConnector.load(
-            "./data/01_raw/locations.csv",
-            file_type='csv'
+            Path(Config.FILES["MODEL_INPUT_DATA"], "Warehouse Options.xlsx")
         )
         return data_df
 
-    @classmethod
-    def get_data_customers(cls):
-
-        data_df = PandasFileConnector.load(
-            "./data/01_raw/customers.csv",
-            file_type='csv'
-        )
-        return data_df
 

@@ -62,5 +62,5 @@ class Config(object):
 
     OPT_PARAMS = dict(
         delivery_speed=60,  # km/h
-        
+        cost_of_delivery=3,  # RM/h
     )
