@@ -1,6 +1,6 @@
 import pyomo.environ as pyo
 from src.optimisation_model.preprocessing import Preprocessing
-from config import Logger
+from conf import Logger
 
 class OptimisationModel(object):
     """

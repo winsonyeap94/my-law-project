@@ -3,7 +3,7 @@ Dataset connector script includes PandasFileConnector, DatabaseFileConnector, AP
 """
 
 import yaml
-from config import Logger
+from conf import Logger
 
 
 class YAMLFileConnector:

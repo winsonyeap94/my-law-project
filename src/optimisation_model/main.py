@@ -3,7 +3,7 @@ from src.optimisation_model.preprocessing import Preprocessing
 from src.optimisation_model.model import OptimisationModel
 from src.optimisation_model.solver import ModelSolver
 from src.optimisation_model.postprocessing import Postprocessing
-from config import Logger
+from conf import Logger
 
 _logger = Logger().logger
 

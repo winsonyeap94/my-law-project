@@ -4,7 +4,7 @@ DatabaseFileConnector script includes reading and writing to Postgresql, MySQL, 
 
 import pandas as pd
 from sqlalchemy import create_engine
-from config import Logger
+from conf import Logger
 
 
 class DatabaseConnector:

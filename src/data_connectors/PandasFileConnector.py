@@ -6,7 +6,7 @@ pickle, parquet.
 import json
 import pandas as pd
 from pathlib import Path
-from config import Logger
+from conf import Logger
 
 
 class PandasFileConnector:

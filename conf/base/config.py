@@ -45,27 +45,22 @@ class Config(object):
     )
 
     # ================================================================================
-    # Variable List
-    # List of variables with their names and units. This is to be recorded as part of documentation.
-    # ================================================================================
-    VARS = [
-        dict(filename="technicians", filepath='./data/01_raw/technicians.csv'),
-        dict(filename="locations", filepath='./data/01_raw/locations.csv'),
-        dict(filename="customers", filepath='./data/01_raw/customers.csv')
-    ]
-        
-
-    # ================================================================================
     # Optimisation Model Configurations by Solver Types
     # ================================================================================
-    OPTIMISATION_MODELLING_CONFIG = dict(
+    OPTIMISATION_MODEL_CONFIG = dict(
+        
         SOLVER_TYPE='cbc',
 
         SOLVER_OPTION=dict(
             cbc={
-            'ratioGap': 0.01,
-            'nodeStrategy': 'hybrid',
-            'seconds': 600,
+                'ratioGap': 0.01,
+                'nodeStrategy': 'hybrid',
+                'seconds': 600,
             }
-        ),
+        ),        
+    )
+
+    OPT_PARAMS = dict(
+        delivery_speed=60,  # km/h
+        
     )

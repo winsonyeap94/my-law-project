@@ -1,5 +1,6 @@
 import pandas as pd
 import geopy.distance
+from conf import Config
 from pathlib import Path
 from src.data_connectors import PandasFileConnector
 
@@ -7,11 +8,11 @@ from src.data_connectors import PandasFileConnector
 class DataPreprocessor:
 
     EXPORT_DIR = {
-        "raw": "./data/01_raw",
-        "intermediate": "./data/02_intermediate",
-        "primary": "./data/03_primary",
-        "feature": "./data/04_feature",
-        "model_input": "./data/05_model_input",
+        "raw": Config.FILES["RAW_DATA"],
+        "intermediate": Config.FILES["INTERMEDIATE_DATA"],
+        "primary": Config.FILES["PRIMARY_DATA"],
+        "feature": Config.FILES["FEATURE_DATA"],
+        "model_input": Config.FILES["MODEL_INPUT_DATA"]
     }
 
     def __init__(self):

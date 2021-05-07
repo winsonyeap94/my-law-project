@@ -4,7 +4,7 @@ CloudFileConnector script includes reading and writing to Azure Blob Storage and
 import os
 import boto3
 import pandas as pd
-from config import Logger
+from conf import Logger
 from azure.storage.blob import BlobServiceClient
 from src.data_connectors.PandasFileConnector import PandasFileConnector
 from io import StringIO

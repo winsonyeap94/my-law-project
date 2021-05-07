@@ -1,5 +1,5 @@
 import pyomo.environ as aml
-from config import Logger
+from conf import Logger
 import json
 
 class Postprocessing(object):
