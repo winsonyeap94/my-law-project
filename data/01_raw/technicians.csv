@@ -1,0 +1,10 @@
+,Capacity,Depot,Equipment Installation,Equipment Setup,Inspect/Service Equipment,Repair - Regular,Repair - Important,Repair - Urgent,Repair - Critical
+Priority,,,2,3,1,1,2,3,4
+Duration (min),,,60,30,60,60,120,90,60
+Albert,480,Heidelberg,,1,1,,,,
+Bob,480,Heidelberg,,1,,1,,1,
+Carlos,480,Freiburg im Breisgau,,1,1,1,,1,
+Doris,480,Freiburg im Breisgau,1,1,,,1,,1
+Ed,480,Heidelberg,,,1,1,,1,
+Flor,360,Freiburg im Breisgau,1,,,1,1,1,
+Gina,360,Heidelberg,1,1,,1,1,1,1

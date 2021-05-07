@@ -1,0 +1,8 @@
+{
+    "python.testing.promptToConfigure": false,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.pythonPath": "C:\\Users\\yeap.xinwei\\Miniconda3\\envs\\my-law-project\\python.exe",
+    "terminal.integrated.shellArgs.windows": ["-ExecutionPolicy", "Bypass"]
+}
