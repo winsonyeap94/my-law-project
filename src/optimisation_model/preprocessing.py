@@ -94,7 +94,6 @@ class Preprocessing:
                                     longitude=township_row['Longitude'],
                                     proportion_sales=township_row['Proportion Sales'])
             self.township_list.append(thisTownship)
-        df_technician = InputHandler.get_data_technicians()
         self._logger.debug("[Preprocessing] __process_townships() completed.")
     
     @property
