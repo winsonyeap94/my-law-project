@@ -15,9 +15,6 @@ class DataPreprocessor:
         "model_input": Config.FILES["MODEL_INPUT_DATA"]
     }
 
-    def __init__(self):
-        pass
-
     @classmethod
     def get_station_sales(cls):
         data_df = PandasFileConnector.load(Path(cls.EXPORT_DIR['raw'], "dmr_final_forecast_central.csv"))
