@@ -13,6 +13,7 @@ def main():
     which does the processing, creates the optimsiation model,
     and does the post-processing.
     """
+    
     # process the data using Preprocessing class
     _logger.debug("[MainPreprocessing] initiated...")
     processData = Preprocessing()
@@ -21,9 +22,11 @@ def main():
     # build the optimisation model, where objectives and constraints are defined.
     _logger.debug("[OptimisationModel] initiated...")
     model_builder = OptimisationModel(processData)
+    
     # get the created model
     opt_model = model_builder.model
-    #solver the optimisation model
+    
+    # solve the optimisation model
     ModelSolver(opt_model)
     _logger.debug("[OptimisationModel] completed successfully.")
 

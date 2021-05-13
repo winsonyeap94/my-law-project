@@ -2,6 +2,7 @@ from conf import Logger
 import pyomo.environ as pyo
 from src.optimisation_model.preprocessing import Preprocessing
 
+
 class OptimisationModel(object):
     """
     This class defines the optimisation model objectives
@@ -55,16 +56,17 @@ class OptimisationModel(object):
         self.model.g = pyo.Var(self.model.C, domain= pyo.Binary)
         self._logger.info("[ModelBuilding] Defining model decision variables completed successfully.")
 
-        # set obhective function
+        # set objective function
         self._logger.debug("[ModelBuilding] Defining model objective function initiated...")
         self.model.obj = pyo.Objective(rule=self.objective, sense=pyo.minimize)
         self._logger.info("[ModelBuilding] Defining model objective function completed successfully.")
+
         # set Constraints
         self.__add_constraints()
         
     def __add_constraints(self):
         self._logger.info("[ModelBuilding] Defining model constraint function initiated...")
-        #technician constraints
+        # technician constraints
         self.__technician_constraint()
         # A technician must be assigned to a job, or a gap is declared (1)
         self.model.technician_job = pyo.ConstraintList()
