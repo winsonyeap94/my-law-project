@@ -1,20 +1,33 @@
 import json
+import pandas as pd
 from conf import Logger
 import pyomo.environ as aml
 
 
-class Postprocessing(object):
+class Postprocessing:
     
     def __init__(self, model, processed_data):
         self._logger = Logger().logger
         self.model = model
         self.processed_data = processed_data
-        self.__assignment_data()
-        self.__technicians_data()
-        self.__utilization_data()
-        
+        self.warehouse_data = self.__warehouse_data()
+        # self.__assignment_data()
+        # self.__technicians_data()
+        # self.__utilization_data()
+
+    def __warehouse_data(self):
+        self._logger.debug("[PostProcessing] Warehouses' assignment detail is as such:")
+        warehouse_data = pd.DataFrame()
+        for w in self.model.W:
+            append_row = pd.DataFrame({
+                'Name': w,
+                'Selected': True if self.model.x[w]() == 1 else False,
+            }, index=[0])
+            warehouse_data = pd.concat([warehouse_data, append_row], axis=0)
+        return warehouse_data
+
     def __assignment_data(self):
-        self._logger.debug("[PostProcessing] Technicians' assignment detail is as such...")
+        self._logger.debug("[PostProcessing] Warehouses' assignment detail is as such...")
         for j in self.processed_data.customer_list:
             if self.model.g[j.name]() > 0.5:
                 jobStr = f"Nobody assigned to {j.name} ({j.job.name}) in {j.loc}"
@@ -61,7 +74,7 @@ class Postprocessing(object):
             total = self.model.cap[k]
             util = used/total if total > 0 else 0
             self._logger.info(f"[PostProcessing] {k}'s utilization is {round(util, 2)} ({used}/{total})")
-            #print(f"{k}'s utilization is {round(util, 2)} ({used}/{total})")
+
         totUsed = sum(aml.value(self.model.capLHS[k]) for k in self.model.K)
         totCap = sum(self.model.cap[k] for k in self.model.K)
         totUtil = totUsed / totCap if totCap > 0 else 0

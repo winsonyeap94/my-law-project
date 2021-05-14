@@ -32,12 +32,7 @@ class Township:
 
     def __str__(self):
         return f"Township {self.name} ({self.district})--> Lat/Long: ({self.latitude:.3f}, {self.longitude:.3f}) | "\
-               f"Proportion of sales: {self.prooprtion_sales:.3f} | Demand: {self.demand:.0f}"
-
-
-# TODO
-class Despatcher:
-    pass
+               f"Proportion of sales: {self.proportion_sales:.3f} | Demand: {self.demand:.0f}"
 
 
 class Preprocessing:
@@ -86,6 +81,7 @@ class Preprocessing:
         # Loading townships data
         townships_df = InputHandler.get_districts_data()
         townships_df['Proportion Sales'] = townships_df['Proportion Sales'] / townships_df['Proportion Sales'].sum()
+        townships_df = townships_df.drop_duplicates(subset='Township', keep='first')
         
         # Selecting required columns and appending them to self.township_list
         for _, township_row in townships_df.iterrows():
