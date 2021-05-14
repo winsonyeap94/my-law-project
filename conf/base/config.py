@@ -61,7 +61,12 @@ class Config(object):
     )
 
     OPT_PARAMS = dict(
+        total_demand=1_000_000,
         delivery_speed=60,  # km/h
         cost_of_delivery=3,  # RM/h
+        despatch_volume_limit=20,
         station_storage_as_warehouse=0,  # TODO: Proportion of station (sqft) to be used as warehouse storage
+        warehouse_storage_height=1,  # for calculation of warehouse volume = warehouse area * storage height
+        working_hours_per_day=12,  
+        profit_per_sales_volume=10,
     )

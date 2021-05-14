@@ -30,12 +30,12 @@ def main():
     ModelSolver(opt_model)
     _logger.debug("[OptimisationModel] completed successfully.")
 
-    # post-processing of the solved model
-    _logger.debug("[PostProcessing] initiated...")
-    postprocess_output = Postprocessing(opt_model, processData)
-    _logger.debug("[PostProcessing] completed successfully.")
+    # # post-processing of the solved model
+    # _logger.debug("[PostProcessing] initiated...")
+    # postprocess_output = Postprocessing(opt_model, processData)
+    # _logger.debug("[PostProcessing] completed successfully.")
 
-    return postprocess_output
+    # return postprocess_output
 
 
 if __name__ == "__main__":

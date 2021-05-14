@@ -28,10 +28,11 @@ class Township:
         self.latitude = latitude
         self.longitude = longitude
         self.proportion_sales = proportion_sales
+        self.demand = proportion_sales * Config.OPT_PARAMS['total_demand']
 
     def __str__(self):
         return f"Township {self.name} ({self.district})--> Lat/Long: ({self.latitude:.3f}, {self.longitude:.3f}) | "\
-               f"Proportion of sales: {self.prooprtion_sales:.3f}"
+               f"Proportion of sales: {self.prooprtion_sales:.3f} | Demand: {self.demand:.0f}"
 
 
 # TODO
