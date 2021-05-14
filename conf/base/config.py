@@ -49,7 +49,7 @@ class Config(object):
     # ================================================================================
     OPTIMISATION_MODEL_CONFIG = dict(
         
-        SOLVER_TYPE='glpk',
+        SOLVER_TYPE='cbc',
 
         SOLVER_OPTION=dict(
             cbc={
@@ -61,7 +61,7 @@ class Config(object):
     )
 
     OPT_PARAMS = dict(
-        total_demand=1_000_000,
+        total_demand=10_000,
         delivery_speed=60,  # km/h
         cost_of_delivery=3,  # RM/h
         despatch_volume_limit=20,

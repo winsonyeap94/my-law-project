@@ -53,8 +53,7 @@ class Preprocessing:
         self.township_list: List[Township] = []
         self.__process_warehouses()
         self.__process_townships()
-        
-        
+
     def __process_warehouses(self):
         """
         This function processes the technician dataset
@@ -86,6 +85,7 @@ class Preprocessing:
 
         # Loading townships data
         townships_df = InputHandler.get_districts_data()
+        townships_df['Proportion Sales'] = townships_df['Proportion Sales'] / townships_df['Proportion Sales'].sum()
         
         # Selecting required columns and appending them to self.township_list
         for _, township_row in townships_df.iterrows():

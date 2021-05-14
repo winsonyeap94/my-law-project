@@ -17,14 +17,14 @@ class OptimisationModel(object):
         self.__build_model()
         
     def __build_model(self):
-        self._logger.debug("[OptimisationModel] Defining model indicies and sets initiated...")
+        self._logger.debug("[OptimisationModel] Defining model indices and sets initiated...")
 
         # ================================================================================
         # Defining sets
         # ================================================================================
-        self.model.W = pyo.Set(initialize=[k.name for k in self.processed_data.warehouse_list])
-        self.model.T = pyo.Set(initialize=[c.name for c in self.processed_data.township_list])
-        self._logger.info("[OptimisationModel] Defining model indicies and sets completed successfully.")
+        self.model.W = pyo.Set(initialize=[w.name for w in self.processed_data.warehouse_list])
+        self.model.T = pyo.Set(initialize=[t.name for t in self.processed_data.township_list])
+        self._logger.info("[OptimisationModel] Defining model indices and sets completed successfully.")
 
         # ================================================================================
         # Defining parameters
@@ -63,9 +63,9 @@ class OptimisationModel(object):
         
         # Warehouse location selection
         self.model.x = pyo.Var(self.model.W, domain=pyo.Binary)  # TODO: Do I still need this?
-        
+
         # Warehouse-township assignment
-        self.model.x_assign = pyo.Var(self.model.W, self.model.T, domain=pyo.Binary)
+        self.model.x_assign = pyo.Var(self.model.W, self.model.T, domain=pyo.PositiveReals)
         
         # TODO: Number of despatchers assigned to township t from warehouse w
 
@@ -103,9 +103,13 @@ class OptimisationModel(object):
     def __add_constraints(self):
         self._logger.info("[OptimisationModel] Defining model constraint function initiated...")
 
-        # Warehouse supply constraint
-        self.model.warehouse_supply_constraint = pyo.ConstraintList()
-        self.__warehouse_supply_constraint()
+        # Warehouse selection constraint
+        self.model.warehouse_selection_constraint = pyo.ConstraintList()
+        self.__warehouse_selection_constraint()
+
+        # # Warehouse supply constraint
+        # self.model.warehouse_supply_constraint = pyo.ConstraintList()
+        # self.__warehouse_supply_constraint()
 
         # Township demand fulfillment
         self.model.township_demand_fulfillment_constraint = pyo.ConstraintList()
@@ -158,6 +162,15 @@ class OptimisationModel(object):
     @property
     def optimisation_model(self):
         return self.model
+
+    def __warehouse_selection_constraint(self):
+        """
+        Warehouse selection constraint to apply fixed monthly cost if any supply is provided from a warehouse.
+        """
+        for w in self.model.W:
+            self.model.warehouse_selection_constraint.add(
+                pyo.quicksum(self.model.x_assign[w, t] for t in self.model.T) <= 9_999_999 * self.model.x[w]
+            )
 
     def __warehouse_supply_constraint(self):
         """

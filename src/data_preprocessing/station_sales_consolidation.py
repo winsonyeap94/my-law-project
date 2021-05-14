@@ -72,7 +72,6 @@ class DataPreprocessor:
         # Exporting data
         PandasFileConnector.save(districts_df, Path(cls.EXPORT_DIR['model_input'], "districts_df.csv"))
 
-
     @classmethod
     def assign_closest_township(cls, lat, long, districts_df):
         temp_districts_df = districts_df.copy()
@@ -94,4 +93,3 @@ class DataPreprocessor:
 if __name__ == "__main__":
     
     DataPreprocessor.merge_data()
-    

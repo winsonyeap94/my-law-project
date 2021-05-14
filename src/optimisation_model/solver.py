@@ -3,11 +3,12 @@ from conf import Config, Logger
 from pyomo.opt import SolverStatus, TerminationCondition
 
 
-class ModelSolver(object):
+class ModelSolver:
 
     def __init__(self, model) -> None:
         self._logger = Logger().logger
         self.model = model
+        self.results = None
         self.__solve()
 
     def __solve(self) -> None:
@@ -30,6 +31,7 @@ class ModelSolver(object):
         try:
             self._logger.debug("[ModelSolver] Solver starting...")
             results = opt.solve(self.model, tee=True)
+            self.results = results
             self._logger.info("[ModelSolver] Solver completed.")
         except Exception as e:
             raise Exception(f"Model optimisation failed with {solver} with error message {e}.")
