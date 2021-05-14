@@ -151,7 +151,7 @@ class OptimisationModel(object):
         monthly_despatcher_travel_cost = 0  # TODO
         sales_revenue = 0  # TODO
         for w in model.W:
-            monthly_warehouse_cost += model.W[w] * model.w_cost[w]
+            monthly_warehouse_cost += model.x[w] * model.w_cost[w]
             
         return monthly_warehouse_cost
             
@@ -164,7 +164,7 @@ class OptimisationModel(object):
         Warehouse supply to townships must not exceed warehouse's capacity (volume).
         """
         for w in self.model.W:
-            self.model.township_demand_fulfillment_constraint.add(
+            self.model.warehouse_supply_constraint.add(
                 pyo.quicksum(self.model.x_assign[w, t] for t in self.model.T) <= self.model.w_volume[w]
             )
 
@@ -274,4 +274,3 @@ class OptimisationModel(object):
         for j in self.model.C:
             self.model.lateness_constraint.add(self.model.z[j] >= self.model.t[self.model.location[j]] + self.model.dur[j] \
                 - self.model.tDue[j])
-        

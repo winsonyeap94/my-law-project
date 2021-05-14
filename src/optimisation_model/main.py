@@ -10,18 +10,18 @@ _logger = Logger().logger
 def main():
     """
     This function represents the main entry-point function,
-    which does the processing, creates the optimsiation model,
+    which does the processing, creates the optimisation model,
     and does the post-processing.
     """
     
     # process the data using Preprocessing class
     _logger.debug("[MainPreprocessing] initiated...")
-    processData = Preprocessing()
+    processed_data = Preprocessing()
     _logger.debug("[MainPreprocessing] completed successfully.")
 
     # build the optimisation model, where objectives and constraints are defined.
     _logger.debug("[OptimisationModel] initiated...")
-    model_builder = OptimisationModel(processData)
+    model_builder = OptimisationModel(processed_data)
     
     # get the created model
     opt_model = model_builder.model
@@ -40,4 +40,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

@@ -49,7 +49,7 @@ class Config(object):
     # ================================================================================
     OPTIMISATION_MODEL_CONFIG = dict(
         
-        SOLVER_TYPE='cbc',
+        SOLVER_TYPE='glpk',
 
         SOLVER_OPTION=dict(
             cbc={

@@ -1,9 +1,10 @@
-from conf import Config, Logger
 import pyomo.environ as pyo
+from conf import Config, Logger
 from pyomo.opt import SolverStatus, TerminationCondition
-from logging import getLogger
+
 
 class ModelSolver(object):
+
     def __init__(self, model) -> None:
         self._logger = Logger().logger
         self.model = model
@@ -20,10 +21,11 @@ class ModelSolver(object):
 
         # initialise the solver object
         self._logger.debug("[ModelSolver] Solver object initiated...") 
-        solver = Config.OPTIMISATION_MODELLING_CONFIG['SOLVER_TYPE']
-        opt = pyo.SolverFactory(solver) 
-        for k, v in Config.OPTIMISATION_MODELLING_CONFIG['SOLVER_OPTION'].get(solver).items():
-            opt.options[k] = v
+        solver = Config.OPTIMISATION_MODEL_CONFIG['SOLVER_TYPE']
+        opt = pyo.SolverFactory(solver)
+        if Config.OPTIMISATION_MODEL_CONFIG['SOLVER_OPTION'].get(solver) is not None:
+            for k, v in Config.OPTIMISATION_MODEL_CONFIG['SOLVER_OPTION'].get(solver).items():
+                opt.options[k] = v
 
         try:
             self._logger.debug("[ModelSolver] Solver starting...")
@@ -31,7 +33,6 @@ class ModelSolver(object):
             self._logger.info("[ModelSolver] Solver completed.")
         except Exception as e:
             raise Exception(f"Model optimisation failed with {solver} with error message {e}.")
- 
 
         if (results.solver.status == SolverStatus.ok) and (results.solver.termination_condition == TerminationCondition.optimal):
             self._logger.info("Solution is feasible and optimal")
