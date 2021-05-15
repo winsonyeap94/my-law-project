@@ -18,8 +18,12 @@ def viz_warehouse_selection(
 
     # Warehouse-Township assignments
     warehouse_township_assignment_df = warehouse_township_assignment_df.copy()
-    warehouse_township_assignment_df = warehouse_township_assignment_df.rename(columns={'Unnamed: 0': 'Township'})\
-        .set_index('Township').transpose().reset_index(drop=False)
+    if 'Unnamed: 0' in warehouse_township_assignment_df.columns:
+        warehouse_township_assignment_df = warehouse_township_assignment_df.rename(columns={'Unnamed: 0': 'Township'})\
+            .set_index('Township').transpose().reset_index(drop=False)
+    else:
+        warehouse_township_assignment_df = warehouse_township_assignment_df.reset_index(drop=False)\
+            .rename(columns={'index': 'Township'}).set_index('Township').transpose().reset_index(drop=False)
     long_assignment_df = \
         pd.melt(warehouse_township_assignment_df, id_vars='index', value_name='Volume')\
         .rename(columns={'index': 'Warehouse'})

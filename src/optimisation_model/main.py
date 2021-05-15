@@ -32,11 +32,26 @@ def main():
 
     # post-processing of the solved model
     _logger.debug("[PostProcessing] initiated...")
-    postprocess_output = Postprocessing(opt_model, processed_data, export=True)
+    post_process_output = Postprocessing(opt_model, processed_data, export=True)
     _logger.debug("[PostProcessing] completed successfully.")
 
-    # return postprocess_output
+    return post_process_output
 
 
 if __name__ == "__main__":
-    main()
+
+    opt_results = main()
+
+    # ============================== VISUALISATION ==============================
+    from src.viz import viz_warehouse_selection
+    import plotly.io as pio
+    pio.renderers.default = "browser"
+
+    from src.optimisation_model.input_handler import InputHandler
+    warehouses_df = InputHandler.get_warehouse_options()
+    townships_df = InputHandler.get_districts_data()
+    selected_warehouses_df = opt_results.warehouse_selection_data
+    warehouse_township_assignment_df = opt_results.warehouse_township_assignment_data
+
+    fig = viz_warehouse_selection(warehouses_df, townships_df, selected_warehouses_df, warehouse_township_assignment_df)
+    fig.show()

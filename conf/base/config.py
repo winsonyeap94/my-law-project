@@ -60,6 +60,15 @@ class Config(object):
         ),        
     )
 
+    OPTIMISATION_SCENARIO = {
+        '1': '100% Demand Coverage',
+        '2': 'Maximise Profit',
+    }
+
+    ADD_DELIVERY_TIME_CONSTRAINT = True
+
+    ADD_DESPATCHER_CONSTRAINT = False
+
     OPT_PARAMS = dict(
         total_demand=100_000,
         delivery_speed=60,  # km/h
@@ -67,6 +76,7 @@ class Config(object):
         despatch_volume_limit=20,
         station_storage_as_warehouse=0,  # TODO: Proportion of station (sqft) to be used as warehouse storage
         warehouse_storage_height=1,  # for calculation of warehouse volume = warehouse area * storage height
-        working_hours_per_day=12,  
+        working_hours_per_day=12,
         profit_per_sales_volume=10,
+        maximum_delivery_hrs_constraint=3,
     )

@@ -1,12 +1,13 @@
 import pyomo.environ as pyo
 from conf import Config, Logger
+from haversine import haversine
 from src.optimisation_model.preprocessing import Preprocessing
 
 
 class OptimisationModel(object):
     """
     This class defines the optimisation model objectives
-    and its associated costraints.
+    and its associated constraints.
     """
     
     def __init__(self, processed_data: Preprocessing):
@@ -41,7 +42,18 @@ class OptimisationModel(object):
         self.model.t_latitude = pyo.Param(self.model.T, initialize={t.name: t.latitude for t in self.processed_data.township_list}, domain=pyo.Any)
         self.model.t_longitude = pyo.Param(self.model.T, initialize={t.name: t.longitude for t in self.processed_data.township_list}, domain=pyo.Any)
         self.model.t_demand = pyo.Param(self.model.T, initialize={t.name: t.demand for t in self.processed_data.township_list}, domain=pyo.Any)
-        
+
+        # Warehouse-Township distances
+        self.model.w_t_distance = pyo.Param(
+            self.model.W, self.model.T,
+            initialize={
+                (w.name, t.name): max(0.001, haversine((w.latitude, w.longitude), (t.latitude, t.longitude)))
+                for t in self.processed_data.township_list
+                for w in self.processed_data.warehouse_list
+            },
+            domain=pyo.Any
+        )
+
         self._logger.info("[OptimisationModel] Defining model parameters completed successfully.")
 
         # ================================================================================
@@ -61,22 +73,6 @@ class OptimisationModel(object):
         self.model.t_supply = pyo.Var(self.model.T, domain=pyo.PositiveReals)
 
         self._logger.info("[OptimisationModel] Defining model decision variables completed successfully.")
-        
-        # # Customer-technician assignment
-        # self.model.x = pyo.Var(self.model.C, self.model.K, domain=pyo.Binary)
-        # # Technician assignment
-        # self.model.u = pyo.Var(self.model.K,  domain=pyo.Binary)
-        # # Edge-route assignment to technician
-        # self.model.y = pyo.Var(self.model.L, self.model.L, self.model.K, domain=pyo.Binary)
-        # # start time of service
-        # self.model.t = pyo.Var(self.model.L, domain = pyo.PositiveReals)
-        # # Lateness of service
-        # self.model.z = pyo.Var(self.model.C, domain = pyo.PositiveReals)
-        # # Artificial variables to correct time window upper and lower limits
-        # self.model.xa = pyo.Var(self.model.C, domain = pyo.PositiveReals)
-        # self.model.xb = pyo.Var(self.model.C, domain = pyo.PositiveReals)
-        # # Unfilled jobs
-        # self.model.g = pyo.Var(self.model.C, domain= pyo.Binary)
         
         # ================================================================================
         # Defining objective function
@@ -102,38 +98,16 @@ class OptimisationModel(object):
         # Township demand fulfillment
         self.model.township_demand_fulfillment_constraint = pyo.ConstraintList()
         self.__township_demand_fulfillment_constraint()
-        
-        self._logger.info("[OptimisationModel] Defining model constraint function completed successfully.")
 
-        # # technician constraints
-        # self.__technician_constraint()
-        # # A technician must be assigned to a job, or a gap is declared (1)
-        # self.model.technician_job = pyo.ConstraintList()
-        # self.__technician_job()
-        # # At most one technician can be assigned to a job
-        # self.model.one_technician_constraint = pyo.ConstraintList()
-        # self.__one_technician_constraint()
-        # # Technician capacity constraints
-        # self.model.technician_capacity = pyo.ConstraintList()
-        # self.__technician_capacity()
-        # # Technician tour constraints
-        # self.model.technician_tour_constraint = pyo.ConstraintList()
-        # self.__technician_tour_constraint()
-        # # Same depot constraints 
-        # self.model.same_depot_constraint = pyo.ConstraintList()
-        # self.__same_depot_constraint()
-        # # Temporal constraints for customer locations
-        # self.model.temporal_customer_constraint =  pyo.ConstraintList()
-        # self.__temporal_customer_constraint()
-        # # Temporal constraints for depot locations
-        # self.model.temporal_depot_constraint =  pyo.ConstraintList()
-        # self.__temporal_depot_constraint()
-        # # Time window constraints
-        # self.model.time_window_constraint =  pyo.ConstraintList()
-        # self.__time_window_constraint()
-        # # Lateness constraint
-        # self.model.lateness_constraint =  pyo.ConstraintList()
-        # self.__lateness_constraint()
+        # Delivery speed constraint
+        if Config.ADD_DELIVERY_TIME_CONSTRAINT:
+            self.model.delivery_time_constraint = pyo.ConstraintList()
+            self.__delivery_time_constraint()
+            # self.model.delivery_speed_constraint = pyo.Constraint(
+            #     self.model.W, self.model.T, rule=self.__delivery_speed_constraint
+            # )
+
+        self._logger.info("[OptimisationModel] Defining model constraint function completed successfully.")
     
     @staticmethod
     def objective(model):
@@ -177,101 +151,14 @@ class OptimisationModel(object):
             self.model.township_demand_fulfillment_constraint.add(
                 pyo.quicksum(self.model.x_assign[w, t] for w in self.model.W) >= self.model.t_demand[t]
             )
-    
-    def __technician_constraint(self):
-        """
-        Technician cannot leave or return to a depot that is not its base
-        """
-        for k in  self.processed_data.technician_list:
-            for d in self.model.D:
-                if k.depot != d:
-                    for i in self.model.L:
-                        self.model.y[i,d,k.name].fix(0)
-                        self.model.y[d,i,k.name].fix(0)
-                        
-    def __technician_job(self):
-        """
-        A technician must be assigned to a job, or a gap is declared.
-        """
-        for j in self.model.C:
-            self.model.technician_job.add(pyo.quicksum(self.model.x[j,k] 
-                                                       for k in self.model.canCover[j]) +  self.model.g[j] == 1)
-    
-    def __one_technician_constraint(self):
-        """
-        At most one technician can be assigned to a job
-        """
-        for j in self.model.C:
-            exp = pyo.quicksum(self.model.x[j,k] for k in self.model.K)
-            self.model.one_technician_constraint.add(exp <= 1)
-            
-    def __technician_capacity(self):
-        """
-        Technician capacity constraints
-        """
 
-        self.model.capLHS = {k : pyo.quicksum(self.model.dur[j]*self.model.x[j,k] for j in self.model.C) +\
-                pyo.quicksum(self.processed_data.dist[i,j]*self.model.y[i,j,k] for i in self.model.L for j in self.model.L) for k in self.model.K}
-        for k in self.model.K:
-            self.model.technician_capacity.add(self.model.capLHS[k] <= self.model.cap[k]*self.model.u[k])
-
-    
-    def __technician_tour_constraint(self):
+    def __delivery_time_constraint(self):
         """
-        Technician tour constraints.
+        All deliveries should be completed within the time constraint given.
         """
-        for j in self.model.C:
-            for k in self.model.K:
-                exp1 = pyo.quicksum(self.model.y[l,self.model.location[j], k] for l in self.model.L)
-                exp2 = pyo.quicksum(self.model.y[self.model.location[j],l, k] for l in self.model.L)
-                self.model.technician_tour_constraint.add(exp1 == self.model.x[j,k])
-                self.model.technician_tour_constraint.add(exp2 == self.model.x[j,k])
-    
-    def __same_depot_constraint(self):
-        """
-        Same depot constraints 
-        """
-        for k in self.model.K:
-            exp1 = pyo.quicksum(self.model.y[j, self.model.depot[k], k] for j in self.model.J)
-            exp2 = pyo.quicksum(self.model.y[self.model.depot[k],j, k] for j in self.model.J)
-            self.model.same_depot_constraint.add(exp1 == self.model.u[k])
-            self.model.same_depot_constraint.add(exp2 == self.model.u[k])
-            
-    def __temporal_customer_constraint(self):
-        """
-        Temporal constraints for depot locations
-        """
-        for j in self.model.C:
-            for i in self.model.C:
-                M = 600 + self.model.dur[i] + self.processed_data.dist[self.model.location[i],self.model.location[j]]
-                exp = self.model.t[self.model.location[i]] + self.model.dur[i] + \
-                    self.processed_data.dist[self.model.location[i], self.model.location[j]] - \
-                        M*(1 - pyo.quicksum(self.model.y[self.model.location[i], self.model.location[j], k] for k in self.model.K))
-                self.model.temporal_customer_constraint.add(self.model.t[self.model.location[j]] >= exp)
-    
-    def __temporal_depot_constraint(self):
-        """
-        Temporal constraints for depot locations
-        """
-        for j in self.model.C:
-            for i in self.model.D:
-                M = 600 + self.processed_data.dist[i, self.model.location[j]]
-                exp = self.model.t[i] + self.processed_data.dist[i, self.model.location[j]] - \
-                        M*(1 - pyo.quicksum(self.model.y[i, self.model.location[j], k] for k in self.model.K))
-                self.model.temporal_depot_constraint.add(self.model.t[self.model.location[j]] >= exp)
-        
-    def __time_window_constraint(self):
-        """
-        Time window constraints
-        """
-        for j in self.model.C:
-            self.model.time_window_constraint.add(self.model.t[self.model.location[j]] + self.model.xa[j] >= self.model.tstart[j])
-            self.model.time_window_constraint.add(self.model.t[self.model.location[j]] - self.model.xb[j] <= self.model.tend[j])
-            
-    def __lateness_constraint(self):
-        """
-        Lateness constraint
-        """
-        for j in self.model.C:
-            self.model.lateness_constraint.add(self.model.z[j] >= self.model.t[self.model.location[j]] + self.model.dur[j] \
-                - self.model.tDue[j])
+        for w in self.model.W:
+            for t in self.model.T:
+                self.model.delivery_time_constraint.add(
+                    (self.model.w_t_distance[w, t] / Config.OPT_PARAMS['delivery_speed']) * self.model.x[w] <=
+                    Config.OPT_PARAMS['maximum_delivery_hrs_constraint']
+                )
