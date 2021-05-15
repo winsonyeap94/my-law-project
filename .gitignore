@@ -1,5 +1,7 @@
 # Data folders
 /data/**/**
+/mlruns/**/**
+/results/**/**
 
 # PyCharm folders
 /.idea/**

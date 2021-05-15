@@ -3,6 +3,7 @@ from src.optimisation_model.preprocessing import Preprocessing
 from src.optimisation_model.model import OptimisationModel
 from src.optimisation_model.solver import ModelSolver
 from src.optimisation_model.postprocessing import Postprocessing
+from src.optimisation_model.mlflow_logger import MLFlowLogger
 
 _logger = Logger().logger
 
@@ -27,13 +28,18 @@ def main():
     opt_model = model_builder.model
     
     # solve the optimisation model
-    ModelSolver(opt_model)
+    model_solver = ModelSolver(opt_model)
     _logger.debug("[OptimisationModel] completed successfully.")
 
     # post-processing of the solved model
     _logger.debug("[PostProcessing] initiated...")
-    post_process_output = Postprocessing(opt_model, processed_data, export=True)
+    post_process_output = Postprocessing(opt_model, model_solver, processed_data, export=True)
     _logger.debug("[PostProcessing] completed successfully.")
+
+    # logging results to mlflow
+    _logger.debug("[MLFlow Logging] initiated...")
+    MLFlowLogger.log(post_process_output)
+    _logger.debug("[MLFLow Logging] completed successfully.")
 
     return post_process_output
 

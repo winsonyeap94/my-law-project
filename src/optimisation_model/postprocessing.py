@@ -8,9 +8,10 @@ from src.data_connectors import PandasFileConnector
 
 class Postprocessing:
     
-    def __init__(self, model, processed_data, export=False):
+    def __init__(self, model, solver_results, processed_data, export=False):
         self._logger = Logger().logger
         self.model = model
+        self.solver_results = solver_results
         self.processed_data = processed_data
         self.warehouse_selection_data = self.__warehouse_selection_data()
         self.warehouse_township_assignment_data = self.__warehouse_township_assignment_data()
