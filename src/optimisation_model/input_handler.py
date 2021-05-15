@@ -21,6 +21,9 @@ class InputHandler:
         data_df = PandasFileConnector.load(
             Path(Config.FILES["MODEL_INPUT_DATA"], "districts_df.csv")
         )
+        data_df['Proportion Sales'] = data_df['Proportion Sales'] / data_df['Proportion Sales'].sum()
+        data_df = data_df.drop_duplicates(subset='Township', keep='first')
+        data_df['Demand'] = data_df['Proportion Sales'] * Config.OPT_PARAMS['total_demand']
         return data_df
 
     @classmethod
@@ -29,6 +32,7 @@ class InputHandler:
         data_df = PandasFileConnector.load(
             Path(Config.FILES["MODEL_INPUT_DATA"], "Warehouse Options.xlsx")
         )
+        data_df['Capacity (ft3)'] = data_df['Area (sqft)'] * Config.OPT_PARAMS['warehouse_storage_height']
         return data_df
 
 

@@ -7,32 +7,32 @@ from src.optimisation_model.input_handler import InputHandler
 
 
 class Warehouse:
-    def __init__(self, name: str, latitude: float, longitude: float, area: float, 
+    def __init__(self, name: str, latitude: float, longitude: float, area: float, capacity: float,
                  monthly_price_per_sqft: float, monthly_cost: float):
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
         self.area = area
+        self.capacity = capacity
         self.monthly_price_per_sqft = monthly_price_per_sqft
         self.monthly_cost = monthly_cost
 
     def __str__(self):
         return f"Warehouse {self.name} --> Lat/Long: ({self.latitude:.3f}, {self.longitude:.3f}) | "\
-               f"Area: {self.area:.2f} sqft | Cost: RM{self.monthly_cost:.0f}/month"
+               f"Capacity: {self.capacity:.2f} | Area: {self.area:.2f} sqft | Cost: RM{self.monthly_cost:.0f}/month"
 
 
 class Township:
-    def __init__(self, name: str, district: str, latitude: float, longitude: float, proportion_sales: float):
+    def __init__(self, name: str, district: str, latitude: float, longitude: float, demand: float):
         self.name = name
         self.district = district
         self.latitude = latitude
         self.longitude = longitude
-        self.proportion_sales = proportion_sales
-        self.demand = proportion_sales * Config.OPT_PARAMS['total_demand']
+        self.demand = demand
 
     def __str__(self):
         return f"Township {self.name} ({self.district})--> Lat/Long: ({self.latitude:.3f}, {self.longitude:.3f}) | "\
-               f"Proportion of sales: {self.proportion_sales:.3f} | Demand: {self.demand:.0f}"
+               f"Demand: {self.demand:.0f}"
 
 
 class Preprocessing:
@@ -65,6 +65,7 @@ class Preprocessing:
                                       latitude=warehouse_row['Latitude'],
                                       longitude=warehouse_row['Longitude'],
                                       area=warehouse_row['Area (sqft)'],
+                                      capacity=warehouse_row['Capacity (ft3)'],
                                       monthly_price_per_sqft=warehouse_row['Price (RM/sqft/month)'],
                                       monthly_cost=warehouse_row['Cost (RM/month)'])
             self.warehouse_list.append(thisWarehouse)
@@ -80,8 +81,6 @@ class Preprocessing:
 
         # Loading townships data
         townships_df = InputHandler.get_districts_data()
-        townships_df['Proportion Sales'] = townships_df['Proportion Sales'] / townships_df['Proportion Sales'].sum()
-        townships_df = townships_df.drop_duplicates(subset='Township', keep='first')
         
         # Selecting required columns and appending them to self.township_list
         for _, township_row in townships_df.iterrows():
@@ -89,7 +88,7 @@ class Preprocessing:
                                     district=township_row['District'],
                                     latitude=township_row['Latitude'],
                                     longitude=township_row['Longitude'],
-                                    proportion_sales=township_row['Proportion Sales'])
+                                    demand=township_row['Demand'])
             self.township_list.append(thisTownship)
         self._logger.debug("[Preprocessing] __process_townships() completed.")
     
@@ -103,8 +102,5 @@ class Preprocessing:
         
 
 if __name__ == "__main__":
+
     Preprocessing()
-        
-        
-        
-    

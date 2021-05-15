@@ -34,28 +34,16 @@ class OptimisationModel(object):
         # Warehouse Parameters
         self.model.w_latitude = pyo.Param(self.model.W, initialize={w.name: w.latitude for w in self.processed_data.warehouse_list}, domain=pyo.Any)
         self.model.w_longitude = pyo.Param(self.model.W, initialize={w.name: w.longitude for w in self.processed_data.warehouse_list}, domain=pyo.Any)        
-        self.model.w_volume = pyo.Param(self.model.W, initialize={
-            w.name: w.area * Config.OPT_PARAMS['warehouse_storage_height'] for w in self.processed_data.warehouse_list
-        }, domain=pyo.Any)
+        self.model.w_volume = pyo.Param(self.model.W, initialize={w.name: w.capacity for w in self.processed_data.warehouse_list}, domain=pyo.Any)
         self.model.w_cost = pyo.Param(self.model.W, initialize={w.name: w.monthly_cost for w in self.processed_data.warehouse_list}, domain=pyo.Any)
         
         # Township parameters
         self.model.t_latitude = pyo.Param(self.model.T, initialize={t.name: t.latitude for t in self.processed_data.township_list}, domain=pyo.Any)
         self.model.t_longitude = pyo.Param(self.model.T, initialize={t.name: t.longitude for t in self.processed_data.township_list}, domain=pyo.Any)
         self.model.t_demand = pyo.Param(self.model.T, initialize={t.name: t.demand for t in self.processed_data.township_list}, domain=pyo.Any)
-
+        
         self._logger.info("[OptimisationModel] Defining model parameters completed successfully.")
 
-        # self.model.cap = pyo.Param(self.model.K, initialize={k.name: k.cap for k in self.processed_data.technician_list}, domain=pyo.Any)
-        # self.model.location = pyo.Param(self.model.C, initialize={j.name: j.loc for j in self.processed_data.customer_list}, domain=pyo.Any)
-        # self.model.depot = pyo.Param(self.model.K, initialize={k.name: k.depot for k in self.processed_data.technician_list}, domain=pyo.Any)
-        # self.model.canCover = pyo.Param(self.model.C, initialize={j.name: [k.name for k in j.job.coveredBy] for j in self.processed_data.customer_list}, domain=pyo.Any)
-        # self.model.dur = pyo.Param(self.model.C, initialize= {j.name: j.job.duration for j in self.processed_data.customer_list}, domain=pyo.Any)
-        # self.model.tstart = pyo.Param(self.model.C, initialize={j.name: j.tStart for j in self.processed_data.customer_list}, domain=pyo.Any)
-        # self.model.tend = pyo.Param(self.model.C, initialize={j.name : j.tEnd for j in self.processed_data.customer_list}, domain=pyo.Any)
-        # self.model.tDue = pyo.Param(self.model.C, initialize={j.name : j.tDue for j in self.processed_data.customer_list}, domain=pyo.Any)
-        # self.model.priority = pyo.Param(self.model.C, initialize={j.name : j.job.priority for j in self.processed_data.customer_list}, domain=pyo.Any)
-        
         # ================================================================================
         # Defining decision variables
         # ================================================================================
@@ -107,9 +95,9 @@ class OptimisationModel(object):
         self.model.warehouse_selection_constraint = pyo.ConstraintList()
         self.__warehouse_selection_constraint()
 
-        # # Warehouse supply constraint
-        # self.model.warehouse_supply_constraint = pyo.ConstraintList()
-        # self.__warehouse_supply_constraint()
+        # Warehouse supply constraint
+        self.model.warehouse_supply_constraint = pyo.ConstraintList()
+        self.__warehouse_supply_constraint()
 
         # Township demand fulfillment
         self.model.township_demand_fulfillment_constraint = pyo.ConstraintList()
