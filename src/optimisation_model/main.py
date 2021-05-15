@@ -32,7 +32,7 @@ def main():
 
     # post-processing of the solved model
     _logger.debug("[PostProcessing] initiated...")
-    postprocess_output = Postprocessing(opt_model, processed_data, export=False)
+    postprocess_output = Postprocessing(opt_model, processed_data, export=True)
     _logger.debug("[PostProcessing] completed successfully.")
 
     # return postprocess_output

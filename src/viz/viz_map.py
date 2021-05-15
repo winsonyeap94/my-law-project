@@ -9,9 +9,14 @@ def viz_warehouse_selection(
 ):
 
     # ========== Data Pre-Processing ==========
+    # Warehouses
     warehouses_df = warehouses_df.copy()
     warehouses_df = warehouses_df.merge(selected_warehouses_df[['Name', 'Selected']], how='outer', 
                                         left_on='Warehouse Location', right_on='Name')
+    selected_warehouses_df = warehouses_df.loc[warehouses_df['Selected'], :].copy()
+    unselected_warehouses_df = warehouses_df.loc[~warehouses_df['Selected'], :].copy()
+
+    # Warehouse-Township assignments
     warehouse_township_assignment_df = warehouse_township_assignment_df.copy()
     warehouse_township_assignment_df = warehouse_township_assignment_df.rename(columns={'Unnamed: 0': 'Township'})\
         .set_index('Township').transpose().reset_index(drop=False)
@@ -33,13 +38,26 @@ def viz_warehouse_selection(
     # Adding Warehouse Location markers
     fig.add_trace(go.Scattermapbox(
         name='Warehouse Locations',
-        lat=warehouses_df['Latitude'],
-        lon=warehouses_df['Longitude'],
-        text="<b>" + warehouses_df['Warehouse Location'] + "</b><br>Capacity: " +
-             warehouses_df['Area (sqft)'].map(lambda x: '{:,.0f}'.format(x)) + " sqft <br>Monthly Cost: RM " +
-             warehouses_df['Cost (RM/month)'].map(lambda x: '{:,.2f}'.format(x)) + " /month",
+        lat=selected_warehouses_df['Latitude'],
+        lon=selected_warehouses_df['Longitude'],
+        text="<b>" + selected_warehouses_df['Warehouse Location'] + "</b><br>Capacity: " +
+             selected_warehouses_df['Area (sqft)'].map(lambda x: '{:,.0f}'.format(x)) + " sqft <br>Monthly Cost: RM " +
+             selected_warehouses_df['Cost (RM/month)'].map(lambda x: '{:,.2f}'.format(x)) + " /month",
         marker=go.scattermapbox.Marker(
-            size=15, color='#00A19C', opacity=0.75, allowoverlap=True
+            size=30, color='#00A19C', opacity=0.95, allowoverlap=True
+        ),
+        hovertemplate="%{text}"
+    ))
+
+    fig.add_trace(go.Scattermapbox(
+        name='(Unselected) Warehouse Locations',
+        lat=unselected_warehouses_df['Latitude'],
+        lon=unselected_warehouses_df['Longitude'],
+        text="<b>" + unselected_warehouses_df['Warehouse Location'] + "</b><br>Capacity: " +
+             unselected_warehouses_df['Area (sqft)'].map(lambda x: '{:,.0f}'.format(x)) + " sqft <br>Monthly Cost: RM " +
+             unselected_warehouses_df['Cost (RM/month)'].map(lambda x: '{:,.2f}'.format(x)) + " /month",
+        marker=go.scattermapbox.Marker(
+            size=30, color='#BFBFBF', opacity=0.75, allowoverlap=True
         ),
         hovertemplate="%{text}"
     ))
@@ -52,7 +70,7 @@ def viz_warehouse_selection(
         text="<b>" + townships_df['Township'] + "</b><br>Demand: " +
              townships_df['Demand'].map(lambda x: '{:,.0f}'.format(x)),
         marker=go.scattermapbox.Marker(
-            size=10, color='#FF8C00', opacity=0.75, allowoverlap=True
+            size=15, color='#FF8C00', opacity=0.75, allowoverlap=True
         ),
         hovertemplate="%{text}"
     ))
@@ -120,8 +138,8 @@ def viz_warehouse_selection(
             orientation="h",
             yanchor="bottom",
             y=1.02,
-            xanchor="right",
-            x=1
+            xanchor="left",
+            x=0
         ),
         margin=dict(
             l=0, r=0, t=0, b=0, pad=0

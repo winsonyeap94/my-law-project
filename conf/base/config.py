@@ -61,7 +61,7 @@ class Config(object):
     )
 
     OPT_PARAMS = dict(
-        total_demand=10_000,
+        total_demand=100_000,
         delivery_speed=60,  # km/h
         cost_of_delivery=3,  # RM/h
         despatch_volume_limit=20,
