@@ -10,12 +10,13 @@ class Postprocessing:
         self._logger = Logger().logger
         self.model = model
         self.processed_data = processed_data
-        self.warehouse_data = self.__warehouse_data()
+        self.warehouse_selection_data = self.__warehouse_selection_data()
+        self.warehouse_township_assignment_data = self.__warehouse_township_assignment_data()
         # self.__assignment_data()
         # self.__technicians_data()
         # self.__utilization_data()
 
-    def __warehouse_data(self):
+    def __warehouse_selection_data(self):
         self._logger.debug("[PostProcessing] Warehouses' assignment detail is as such:")
         warehouse_data = pd.DataFrame()
         for w in self.model.W:
@@ -24,7 +25,18 @@ class Postprocessing:
                 'Selected': True if self.model.x[w]() == 1 else False,
             }, index=[0])
             warehouse_data = pd.concat([warehouse_data, append_row], axis=0)
+            self._logger.debug(f"--> Warehouse: {append_row['Name'].values[0]} | Selected: {append_row['Selected'].values[0]}")
         return warehouse_data
+
+    def __warehouse_township_assignment_data(self):
+        warehouse_assignment_data = {}
+        for w in self.model.W:
+            single_warehouse_dict = {}
+            for t in self.model.T:
+                single_warehouse_dict[t] = self.model.x_assign[w, t]()
+            warehouse_assignment_data[w] = single_warehouse_dict
+        warehouse_assignment_data = pd.DataFrame(warehouse_assignment_data)
+        return warehouse_assignment_data
 
     def __assignment_data(self):
         self._logger.debug("[PostProcessing] Warehouses' assignment detail is as such...")

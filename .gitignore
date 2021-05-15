@@ -1,3 +1,6 @@
+# Data folders
+/data/**/**
+
 # PyCharm folders
 /.idea/**
 

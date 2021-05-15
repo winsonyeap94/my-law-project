@@ -1,4 +1,6 @@
-from conf import Logger
+from conf import Config, Logger
+from pathlib import Path
+from src.data_connectors import PandasFileConnector
 from src.optimisation_model.preprocessing import Preprocessing
 from src.optimisation_model.model import OptimisationModel
 from src.optimisation_model.solver import ModelSolver
@@ -34,6 +36,14 @@ def main():
     _logger.debug("[PostProcessing] initiated...")
     postprocess_output = Postprocessing(opt_model, processed_data)
     _logger.debug("[PostProcessing] completed successfully.")
+
+    # Exporting results
+    _logger.debug("[Data Export] initiated...")
+    PandasFileConnector.save(postprocess_output.warehouse_selection_data, 
+                             Path(Config.FILES['MODEL_OUTPUT'], "Warehouse Selection.csv"))
+    PandasFileConnector.save(postprocess_output.warehouse_township_assignment_data, 
+                             Path(Config.FILES['MODEL_OUTPUT'], "Warehouse Township Assignment.csv"))
+    _logger.debug("[Data Export] completed successfully.")
 
     # return postprocess_output
 
