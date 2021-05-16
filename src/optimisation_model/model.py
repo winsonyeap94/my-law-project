@@ -65,12 +65,13 @@ class OptimisationModel(object):
         self.model.x = pyo.Var(self.model.W, domain=pyo.Binary)  # TODO: Do I still need this?
 
         # Warehouse-township assignment
-        self.model.x_assign = pyo.Var(self.model.W, self.model.T, domain=pyo.PositiveReals)
+        self.model.x_assign = pyo.Var(self.model.W, self.model.T, domain=pyo.NonNegativeReals)
         
-        # TODO: Number of despatchers assigned to township t from warehouse w
+        # Number of despatchers assigned to township t from warehouse w
+        self.model.n_despatchers = pyo.Var(self.model.W, self.model.T, domain=pyo.NonNegativeIntegers)
 
         # Volume supply to township
-        self.model.t_supply = pyo.Var(self.model.T, domain=pyo.PositiveReals)
+        self.model.t_supply = pyo.Var(self.model.T, domain=pyo.NonNegativeReals)
 
         self._logger.info("[OptimisationModel] Defining model decision variables completed successfully.")
         
@@ -99,13 +100,14 @@ class OptimisationModel(object):
         self.model.township_demand_fulfillment_constraint = pyo.ConstraintList()
         self.__township_demand_fulfillment_constraint()
 
+        # Number of despatchers required to serve each warehouse-township assignment
+        self.model.despatcher_requirement_constraint = pyo.ConstraintList()
+        self.__despatcher_requirement_constraint()
+
         # Delivery speed constraint
         if Config.ADD_DELIVERY_TIME_CONSTRAINT:
             self.model.delivery_time_constraint = pyo.ConstraintList()
             self.__delivery_time_constraint()
-            # self.model.delivery_speed_constraint = pyo.Constraint(
-            #     self.model.W, self.model.T, rule=self.__delivery_speed_constraint
-            # )
 
         self._logger.info("[OptimisationModel] Defining model constraint function completed successfully.")
     
@@ -113,13 +115,37 @@ class OptimisationModel(object):
     def objective(model):
         
         monthly_warehouse_cost = 0
-        monthly_despatcher_hiring_cost = 0  # TODO
-        monthly_despatcher_travel_cost = 0  # TODO
+        monthly_despatcher_hiring_cost = 0
+        monthly_delivery_travel_cost = 0
         sales_revenue = 0  # TODO
+
+        # Warehouse Costs
         for w in model.W:
             monthly_warehouse_cost += model.x[w] * model.w_cost[w]
-            
-        return monthly_warehouse_cost
+        total_cost = monthly_warehouse_cost
+
+        # Despatcher hiring costs
+        if Config.ADD_DESPATCHER_HIRING_COST:
+            for w in model.W:
+                for t in model.T:
+                    monthly_despatcher_hiring_cost += \
+                        model.n_despatchers[w, t] * Config.OPT_PARAMS['despatch_hiring_cost']
+            total_cost += monthly_despatcher_hiring_cost
+
+        # Delivery/travelling cost
+        if Config.ADD_DELIVERY_COST:
+            for w in model.W:
+                for t in model.T:
+                    # Time to complete a delivery (to-and-fro)
+                    time_per_delivery = (model.w_t_distance[w, t] / Config.OPT_PARAMS['delivery_speed']) * 2
+                    # Delivery trips required
+                    n_delivery_trips = model.x_assign[w, t] / Config.OPT_PARAMS['despatch_volume_limit']
+                    # Total cost of delivery
+                    monthly_delivery_travel_cost += \
+                        n_delivery_trips * time_per_delivery * Config.OPT_PARAMS['cost_of_delivery']
+            total_cost += monthly_delivery_travel_cost
+
+        return total_cost
             
     @property
     def optimisation_model(self):
@@ -151,6 +177,24 @@ class OptimisationModel(object):
             self.model.township_demand_fulfillment_constraint.add(
                 pyo.quicksum(self.model.x_assign[w, t] for w in self.model.W) >= self.model.t_demand[t]
             )
+
+    def __despatcher_requirement_constraint(self):
+        """
+        Constraint to determine number of despatchers required for each warehouse-township assignment.
+        """
+        for w in self.model.W:
+            for t in self.model.T:
+                # Time to complete a delivery (to-and-fro)
+                time_per_delivery = (self.model.w_t_distance[w, t] / Config.OPT_PARAMS['delivery_speed']) * 2
+                # Frequency of deliveries in a month
+                monthly_delivery_freq = 30 * Config.OPT_PARAMS['working_hours_per_day'] / time_per_delivery
+                # Minimum required despatchers
+                min_required_despatchers = \
+                    self.model.x_assign[w, t] / (Config.OPT_PARAMS['despatch_volume_limit'] * monthly_delivery_freq)
+                # Constraint
+                self.model.despatcher_requirement_constraint.add(
+                    self.model.n_despatchers[w, t] >= min_required_despatchers
+                )
 
     def __delivery_time_constraint(self):
         """

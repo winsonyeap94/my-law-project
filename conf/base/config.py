@@ -60,19 +60,29 @@ class Config(object):
         ),        
     )
 
+    # ================================================================================
+    # High-Level Optimisation Scenario Settings
+    # ================================================================================
     OPTIMISATION_SCENARIO = {
         '1': '100% Demand Coverage',
         '2': 'Maximise Profit',
     }
 
+    # Additional Objective Functions
+    ADD_DESPATCHER_HIRING_COST = True
+    ADD_DELIVERY_COST = True
+
+    # Additional Constraints
     ADD_DELIVERY_TIME_CONSTRAINT = True
 
-    ADD_DESPATCHER_CONSTRAINT = False
-
+    # ================================================================================
+    # Optimisation Parameters
+    # ================================================================================
     OPT_PARAMS = dict(
         total_demand=100_000,
         delivery_speed=60,  # km/h
         cost_of_delivery=3,  # RM/h
+        despatch_hiring_cost=2000,  # RM/month
         despatch_volume_limit=20,
         station_storage_as_warehouse=0,  # TODO: Proportion of station (sqft) to be used as warehouse storage
         warehouse_storage_height=1,  # for calculation of warehouse volume = warehouse area * storage height

@@ -15,6 +15,7 @@ class Postprocessing:
         self.processed_data = processed_data
         self.warehouse_selection_data = self.__warehouse_selection_data()
         self.warehouse_township_assignment_data = self.__warehouse_township_assignment_data()
+        self.despatchers_data = self.__despatchers_data()
 
         # Exporting results
         if export:
@@ -23,6 +24,8 @@ class Postprocessing:
                                      Path(Config.FILES['MODEL_OUTPUT'], "Warehouse Selection.csv"))
             PandasFileConnector.save(self.warehouse_township_assignment_data, 
                                      Path(Config.FILES['MODEL_OUTPUT'], "Warehouse Township Assignment.csv"))
+            PandasFileConnector.save(self.despatchers_data,
+                                     Path(Config.FILES['MODEL_OUTPUT'], "Despatcher Requirements.csv"))
             self._logger.debug("[Data Export] completed successfully.")
 
     def __warehouse_selection_data(self):
@@ -47,3 +50,12 @@ class Postprocessing:
         warehouse_assignment_data = pd.DataFrame(warehouse_assignment_data)
         return warehouse_assignment_data
 
+    def __despatchers_data(self):
+        despatchers_data = {}
+        for w in self.model.W:
+            single_warehouse_dict = {}
+            for t in self.model.T:
+                single_warehouse_dict[t] = self.model.n_despatchers[w, t]()
+            despatchers_data[w] = single_warehouse_dict
+        despatchers_data = pd.DataFrame(despatchers_data)
+        return despatchers_data
