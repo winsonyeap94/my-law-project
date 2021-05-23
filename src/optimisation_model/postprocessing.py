@@ -17,6 +17,13 @@ class Postprocessing:
         self.warehouse_township_assignment_data = self.__warehouse_township_assignment_data()
         self.despatchers_data = self.__despatchers_data()
 
+        # Converting results into a JSON format
+        self.compiled_json_results = {
+            "warehouse_selection_data": self.warehouse_selection_data.to_dict(orient='records'),
+            "warehouse_township_assignment_data": self.warehouse_township_assignment_data.to_dict(orient='records'),
+            "despatchers_data": self.despatchers_data.to_dict(orient='records'),
+        }
+
         # Exporting results
         if export:
             self._logger.debug("[Data Export] initiated...")

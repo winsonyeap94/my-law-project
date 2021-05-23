@@ -38,7 +38,9 @@ async def home(request: Request):
 @app.post('/run_optimisation/', tags=['optimisation'])
 async def run_optimisation(
     request: Request,
-    inputs: OptimisationModelInput
+    inputs: OptimisationModelInput = Body(
+        ..., example=EXAMPLE_JSON["OptimisationModelInput"]
+    )
 ):
 
     user_ip = request.client.host
@@ -50,7 +52,7 @@ async def run_optimisation(
 
     request.app.logger.info(f"[{user_ip}] /run_optimisation/ completed.")
 
-    return JSONResponse(content=optimisation_results)
+    return JSONResponse(content=optimisation_results.compiled_json_results)
 
 
 if __name__ == '__main__':
