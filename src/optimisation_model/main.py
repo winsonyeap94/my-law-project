@@ -8,7 +8,7 @@ from src.optimisation_model.mlflow_logger import MLFlowLogger
 _logger = Logger().logger
 
 
-def main():
+def main(**kwargs):
     """
     This function represents the main entry-point function,
     which does the processing, creates the optimisation model,
@@ -22,7 +22,7 @@ def main():
 
     # build the optimisation model, where objectives and constraints are defined.
     _logger.debug("[OptimisationModel] initiated...")
-    model_builder = OptimisationModel(processed_data)
+    model_builder = OptimisationModel(processed_data, **kwargs)
     
     # get the created model
     opt_model = model_builder.model
