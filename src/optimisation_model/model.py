@@ -142,6 +142,11 @@ class OptimisationModel(object):
             self.model.township_demand_fulfillment_constraint = pyo.ConstraintList()
             self.__township_demand_fulfillment_constraint()
 
+        # Additional demand constraint to avoid excessive supply to townships
+        if self.optimisation_scenario == 2:
+            self.model.prevent_excessive_township_supply_constraint = pyo.ConstraintList()
+            self.__prevent_excessive_township_supply_constraint()
+
         # Number of despatchers required to serve each warehouse-township assignment
         self.model.despatcher_requirement_constraint = pyo.ConstraintList()
         self.__despatcher_requirement_constraint()
@@ -271,6 +276,15 @@ class OptimisationModel(object):
         for t in self.model.T:
             self.model.township_demand_fulfillment_constraint.add(
                 pyo.quicksum(self.model.x_assign[w, t] for w in self.model.W) >= self.model.t_demand[t]
+            )
+
+    def __prevent_excessive_township_supply_constraint(self):
+        """
+        Prevent excessive supply from warehouses to townships, especially during profit maximisation.
+        """
+        for t in self.model.T:
+            self.model.prevent_excessive_township_supply_constraint.add(
+                pyo.quicksum(self.model.x_assign[w, t] for w in self.model.W) <= self.model.t_demand[t]
             )
 
     def __despatcher_requirement_constraint(self):

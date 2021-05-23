@@ -64,7 +64,7 @@ class Config(object):
         '2': 'Maximise Profit', 
     }
 
-    SELECTED_OPTIMISATION_SCENARIO = 1
+    SELECTED_OPTIMISATION_SCENARIO = 2
 
     # Additional Objective Functions
     ADD_DESPATCHER_HIRING_COST = True
@@ -77,7 +77,7 @@ class Config(object):
     # Optimisation Parameters
     # ================================================================================
     OPT_PARAMS = dict(
-        total_demand=100_000, 
+        total_demand=1_000_000, 
         delivery_speed=60,  # km/h
         cost_of_delivery=3,  # RM/h
         despatch_hiring_cost=2000,  # RM/month
