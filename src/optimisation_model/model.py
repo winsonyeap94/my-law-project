@@ -87,7 +87,7 @@ class OptimisationModel(object):
         self.model.w_t_distance = pyo.Param(
             self.model.W, self.model.T,
             initialize={
-                (w.name, t.name): max(0.001, haversine((w.latitude, w.longitude), (t.latitude, t.longitude)))
+                (w.name, t.name): max(15, haversine((w.latitude, w.longitude), (t.latitude, t.longitude)))
                 for t in self.processed_data.township_list
                 for w in self.processed_data.warehouse_list
             },
