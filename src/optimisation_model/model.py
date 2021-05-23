@@ -25,9 +25,21 @@ class OptimisationModel(object):
             optimisation_scenario (int, optional): Optimisation scenario to run. Defaults to Config setting.
             add_delivery_time_constraint (bool, optional): Whether to add delivery time constraint or not. 
                 Defaults to Config setting.
+            add_despatcher_hiring_cost (bool, optional): Whether to consider despatcher hiring cost. 
+                Defaults to Config setting.
+            add_delivery_cost (bool, optional): Whether to consider delivery cost or not. Defaults to Config setting.
+            despatch_hiring_cost (float, optional): Cost of hiring a despatcher (per head). Defaults to Config setting.
+            delivery_speed (float, optional): Delivery speed of despatchers (km/h). Defaults to Config setting.
+            despatch_volume_limit (float, optional): Volume limit per despatch (ft3). Defaults to Config setting.
+            cost_of_delivery (float, optional): Cost per delivery (RM/km). Defaults to Config setting.
+            working_hours_per_day (float, optional): Working hours per day (hrs). Defaults to Config setting.
+            maximum_delivery_hrs_constraint (float, optional): Maximum limit within which deliveries must be made to 
+                customers (hrs). Defaults to Config setting.
+            profit_per_sales_volume (float, optional): Profit made per sales (RM/ft3). Defaults to Config setting.
         """
         self._logger = Logger().logger
         self.processed_data = processed_data
+        
         self.optimisation_scenario = optimisation_scenario or Config.SELECTED_OPTIMISATION_SCENARIO
         self.add_delivery_time_constraint = add_delivery_time_constraint or Config.ADD_DELIVERY_TIME_CONSTRAINT
         self.add_despatcher_hiring_cost = add_despatcher_hiring_cost or Config.ADD_DESPATCHER_HIRING_COST
