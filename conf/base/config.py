@@ -61,8 +61,10 @@ class Config(object):
     # ================================================================================
     OPTIMISATION_SCENARIO = {
         '1': '100% Demand Coverage',
-        '2': 'Maximise Profit',  # TODO
+        '2': 'Maximise Profit', 
     }
+
+    SELECTED_OPTIMISATION_SCENARIO = 1
 
     # Additional Objective Functions
     ADD_DESPATCHER_HIRING_COST = True
@@ -81,8 +83,8 @@ class Config(object):
         despatch_hiring_cost=2000,  # RM/month
         despatch_volume_limit=20,
         station_storage_as_warehouse=0,  # TODO: Proportion of station (sqft) to be used as warehouse storage
-        warehouse_storage_height=1,  # for calculation of warehouse volume = warehouse area * storage height
+        warehouse_storage_height=3,  # for calculation of warehouse volume = warehouse area * storage height
         working_hours_per_day=12,
-        profit_per_sales_volume=10,
+        profit_per_sales_volume=10,  # RM/ft3
         maximum_delivery_hrs_constraint=3,
     )
