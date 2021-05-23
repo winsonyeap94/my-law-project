@@ -46,6 +46,6 @@ class ModelSolver:
 
 
 if __name__ == "__main__":
-    # TODO: write main method
+    
     test = ModelSolver()
     print(test)

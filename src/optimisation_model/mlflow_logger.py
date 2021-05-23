@@ -39,11 +39,14 @@ class MLFlowLogger:
         # Post-processed results
         warehouse_selection_data = post_process_output.warehouse_selection_data
         warehouse_township_assignment_data = post_process_output.warehouse_township_assignment_data
+        despatchers_data = post_process_output.despatchers_data
 
         PandasFileConnector.save(warehouse_selection_data,
                                  Path(artifact_folder, "warehouse_selection_data.csv"))
         PandasFileConnector.save(warehouse_township_assignment_data,
                                  Path(artifact_folder, "warehouse_township_assignment_data.csv"))
+        PandasFileConnector.save(despatchers_data,
+                            Path(artifact_folder, "despatchers_data.csv"))
 
         # Logging to mlflow
         mlflow.log_params(params_results_dict)

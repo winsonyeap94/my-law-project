@@ -34,13 +34,9 @@ class Config(object):
     # MLFlow Settings
     # For more information refer to: https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
     # ================================================================================
-    # TODO
     MLFLOW = dict(
         TRACKING_URI="./mlruns/",  # Location where mlflow artifacts will be stored, can also be AWS S3 or Azure Bucket
         EXPERIMENT_NAME="Experiment-1",
-        # LOG_TRAINPIPELINE=True,  # Toggle between True/False to log at different levels
-        LOG_MLTRAINER=True,  # Toggle between True/False to log at different levels
-        LOG_MLPIPELINE=True,  # Toggle between True/False to log at different levels
         TEMP_ARTIFACT_DIR="./tmp/",  # Temporary directory for storing artifacts, will be automatically deleted
     )
 
@@ -65,7 +61,7 @@ class Config(object):
     # ================================================================================
     OPTIMISATION_SCENARIO = {
         '1': '100% Demand Coverage',
-        '2': 'Maximise Profit',
+        '2': 'Maximise Profit',  # TODO
     }
 
     # Additional Objective Functions
@@ -79,7 +75,7 @@ class Config(object):
     # Optimisation Parameters
     # ================================================================================
     OPT_PARAMS = dict(
-        total_demand=100_000,
+        total_demand=100_000, 
         delivery_speed=60,  # km/h
         cost_of_delivery=3,  # RM/h
         despatch_hiring_cost=2000,  # RM/month

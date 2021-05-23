@@ -62,16 +62,14 @@ class OptimisationModel(object):
         self._logger.debug("[OptimisationModel] Defining model decision variables initiated...")
         
         # Warehouse location selection
-        self.model.x = pyo.Var(self.model.W, domain=pyo.Binary)  # TODO: Do I still need this?
+        self.model.x = pyo.Var(self.model.W, domain=pyo.Binary)  
 
         # Warehouse-township assignment
         self.model.x_assign = pyo.Var(self.model.W, self.model.T, domain=pyo.NonNegativeReals)
         
         # Number of despatchers assigned to township t from warehouse w
+        self.model.n_despatchers_real = pyo.Var(self.model.W, self.model.T, domain=pyo.NonNegativeReal)
         self.model.n_despatchers = pyo.Var(self.model.W, self.model.T, domain=pyo.NonNegativeIntegers)
-
-        # Volume supply to township
-        self.model.t_supply = pyo.Var(self.model.T, domain=pyo.NonNegativeReals)
 
         self._logger.info("[OptimisationModel] Defining model decision variables completed successfully.")
         
