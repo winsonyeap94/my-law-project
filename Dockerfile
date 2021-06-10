@@ -1,7 +1,6 @@
-# Using miniconda instead of Python
-FROM continuumio/miniconda
+FROM python:3.8.10-slim-buster
 
-LABEL maintainer "My LAW Project"
+LABEL maintainer="My LAW Project"
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -9,25 +8,23 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-# Install conda requirements
-COPY ./src/environment.yml .
-RUN conda env create -f environment.yml python=3.8
+# ODBC Drivers
+RUN apt-get -y update \
+    && apt-get -y install gcc g++
 
-# Make RUN commands use the new environment:
-# https://pythonspeed.com/articles/activate-conda-dockerfile/
-SHELL ["conda", "run", "-n", "my-law-project", "/bin/bash", "-c"]
-
-# Install gunicorn/uvicorn
+# Install pip requirements
+COPY ./src/requirements.txt .
+RUN python -m pip install psycopg2-binary
+RUN python -m pip install -r requirements.txt
 RUN python -m pip install gunicorn
 RUN python -m pip install uvicorn
-RUN conda install -c conda-forge uvicorn
+
+# Set PythonPath
+ENV PYTHONPATH "${PYTHONPATH}:/home/my-law-project-dash/"
 
 # Shift all codes to /app folder, otherwise there are many other folders in root
 WORKDIR /home/my-law-project/
 COPY . /home/my-law-project/
-
-# Set PythonPath
-ENV PYTHONPATH "${PYTHONPATH}:/home/my-law-project/"
 
 # Creates a non-root user and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
@@ -38,6 +35,5 @@ USER appuser
 EXPOSE 6128
 
 # Command to host app using gunicorn
-RUN "nohup uvicorn --host 0.0.0.0 --port 6128 --workers 1 src.api.fastapi_main:app &"
-# CMD ["uvicorn", "--host", "0.0.0.0", "--port", "6128", "--workers", "1", "src.api.fastapi_main:app"]
+ CMD ["uvicorn", "--host", "0.0.0.0", "--port", "6128", "--workers", "4", "src.api.fastapi_main:app", "--timeout", "300"]
 
