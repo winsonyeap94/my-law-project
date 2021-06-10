@@ -35,5 +35,5 @@ USER appuser
 EXPOSE 6128
 
 # Command to host app using gunicorn
- CMD ["uvicorn", "--host", "0.0.0.0", "--port", "6128", "--workers", "4", "src.api.fastapi_main:app", "--timeout", "300"]
+ CMD ["uvicorn", "--host", "0.0.0.0", "--port", "6128", "--workers", "4", "src.api.fastapi_main:app", "--timeout-keep-alive", "300"]
 
