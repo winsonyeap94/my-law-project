@@ -52,6 +52,18 @@ class OptimisationModel(object):
         self.maximum_delivery_hrs_constraint = maximum_delivery_hrs_constraint or Config.OPT_PARAMS['maximum_delivery_hrs_constraint']
         self.profit_per_sales_volume = profit_per_sales_volume or Config.OPT_PARAMS['profit_per_sales_volume']
 
+        self._logger.info(
+            f"[OptimisationModel] Initialised | optimisation_scenario: {self.optimisation_scenario} | "
+            f"add_delivery_time_constraint: {self.add_delivery_time_constraint} | "
+            f"add_despatcher_hiring_cost: {self.add_despatcher_hiring_cost} | "
+            f"add_delivery_cost: {self.add_delivery_cost} | "
+            f"despatch_hiring_cost: {self.despatch_hiring_cost} | delivery_speed: {self.delivery_speed} | "
+            f"despatch_volume_limit: {self.despatch_volume_limit} | cost_of_delivery: {self.cost_of_delivery} | "
+            f"working_hours_per_day: {self.working_hours_per_day} | "
+            f"maximum_delivery_hrs_constraint: {self.maximum_delivery_hrs_constraint} | "
+            f"profit_per_sales_volume: {self.profit_per_sales_volume}"
+        )
+
         self.model = pyo.ConcreteModel()
         self.model.optimised = False
         self.__build_model()

@@ -46,6 +46,8 @@ class Preprocessing:
         self._logger = Logger().logger
         self.warehouse_list: List[Warehouse] = []
         self.township_list: List[Township] = []
+        self.warehouse_df = None
+        self.township_df = None
         self.__process_warehouses()
         self.__process_townships()
 
@@ -58,6 +60,7 @@ class Preprocessing:
 
         # Loading warehouse data
         warehouses_df = InputHandler.get_warehouse_options()
+        self.warehouse_df = warehouses_df
 
         # Selecting required columns and appending them to self.warehouse_list
         for _, warehouse_row in warehouses_df.iterrows():
@@ -81,6 +84,7 @@ class Preprocessing:
 
         # Loading townships data
         townships_df = InputHandler.get_districts_data()
+        self.township_df = townships_df
         
         # Selecting required columns and appending them to self.township_list
         for _, township_row in townships_df.iterrows():

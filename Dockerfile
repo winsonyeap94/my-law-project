@@ -15,11 +15,12 @@ RUN conda env create -f environment.yml python=3.8
 
 # Make RUN commands use the new environment:
 # https://pythonspeed.com/articles/activate-conda-dockerfile/
-SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "my-law-project", "/bin/bash", "-c"]
 
 # Install gunicorn/uvicorn
 RUN python -m pip install gunicorn
 RUN python -m pip install uvicorn
+RUN conda install -c conda-forge uvicorn
 
 # Shift all codes to /app folder, otherwise there are many other folders in root
 WORKDIR /home/my-law-project/
@@ -37,5 +38,6 @@ USER appuser
 EXPOSE 6128
 
 # Command to host app using gunicorn
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "6128", "--workers", "1", "src.api.fastapi_main:app"]
+RUN "nohup uvicorn --host 0.0.0.0 --port 6128 --workers 1 src.api.fastapi_main:app &"
+# CMD ["uvicorn", "--host", "0.0.0.0", "--port", "6128", "--workers", "1", "src.api.fastapi_main:app"]
 

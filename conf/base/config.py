@@ -64,14 +64,14 @@ class Config(object):
         '2': 'Maximise Profit', 
     }
 
-    SELECTED_OPTIMISATION_SCENARIO = 2
+    SELECTED_OPTIMISATION_SCENARIO = 1
 
     # Additional Objective Functions
-    ADD_DESPATCHER_HIRING_COST = True
-    ADD_DELIVERY_COST = True
+    ADD_DESPATCHER_HIRING_COST = False
+    ADD_DELIVERY_COST = False
 
     # Additional Constraints
-    ADD_DELIVERY_TIME_CONSTRAINT = True
+    ADD_DELIVERY_TIME_CONSTRAINT = False
 
     # ================================================================================
     # Optimisation Parameters

@@ -13,12 +13,16 @@ class Postprocessing:
         self.model = model
         self.solver_results = solver_results
         self.processed_data = processed_data
+        self.warehouse_data = processed_data.warehouse_df
+        self.township_data = processed_data.township_df
         self.warehouse_selection_data = self.__warehouse_selection_data()
         self.warehouse_township_assignment_data = self.__warehouse_township_assignment_data()
         self.despatchers_data = self.__despatchers_data()
 
         # Converting results into a JSON format
         self.compiled_json_results = {
+            "warehouse_data": self.warehouse_data.to_dict(orient='records'),
+            "township_data": self.township_data.to_dict(orient='records'),
             "warehouse_selection_data": self.warehouse_selection_data.to_dict(orient='records'),
             "warehouse_township_assignment_data": self.warehouse_township_assignment_data.to_dict(orient='records'),
             "despatchers_data": self.despatchers_data.to_dict(orient='records'),

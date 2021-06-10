@@ -1,4 +1,5 @@
 import pyomo.environ as pyo
+from datetime import datetime
 from conf import Config, Logger
 from pyomo.opt import SolverStatus, TerminationCondition
 
@@ -21,7 +22,7 @@ class ModelSolver:
         pyo.TransformationFactory("contrib.deactivate_trivial_constraints").apply_to(self.model)  # type: ignore
 
         # initialise the solver object
-        self._logger.debug("[ModelSolver] Solver object initiated...") 
+        self._logger.debug("[ModelSolver] Solver object initiated...")
         solver = Config.OPTIMISATION_MODEL_CONFIG['SOLVER_TYPE']
         opt = pyo.SolverFactory(solver)
         if Config.OPTIMISATION_MODEL_CONFIG['SOLVER_OPTION'].get(solver) is not None:
@@ -29,10 +30,12 @@ class ModelSolver:
                 opt.options[k] = v
 
         try:
+            start_time = datetime.now()
             self._logger.debug("[ModelSolver] Solver starting...")
             results = opt.solve(self.model, tee=True)
             self.results = results
-            self._logger.info("[ModelSolver] Solver completed.")
+            end_time = datetime.now()
+            self._logger.info(f"[ModelSolver] Solver completed in {end_time - start_time}.")
         except Exception as e:
             raise Exception(f"Model optimisation failed with {solver} with error message {e}.")
 
