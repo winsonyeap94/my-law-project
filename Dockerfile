@@ -19,6 +19,9 @@ RUN python -m pip install -r requirements.txt
 RUN python -m pip install gunicorn
 RUN python -m pip install uvicorn
 
+# install cbc
+RUN apt-get install -y -qq coinor-cbc
+
 # Set PythonPath
 ENV PYTHONPATH "${PYTHONPATH}:/home/my-law-project-dash/"
 
